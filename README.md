@@ -1,5 +1,5 @@
 # The Spark Foundation-Tasks
-This repository contains the tasks that I completed while working as an intern at The Sparks Foundation.
+This repository contains the tasks that I accomplished while working as an intern at The Sparks Foundation.
 - Domain - Data Science and Business Analytics
 - Duration - 1 Month ( February - 2023 )
  
