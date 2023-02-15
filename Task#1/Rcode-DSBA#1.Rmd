@@ -1,0 +1,149 @@
+---
+title: "TSF-GRIP(Feb`23) Supervised-ML using R"
+author: "Bhanuprakash"
+date: "03/02/2023"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+
+## Loading dataset of Scores & Hours.
+```{r}
+df=read.csv("C:\\Users\\Bhanu\\OneDrive\\Desktop\\Tasks\\StudentScores.csv",header = T);df
+attach(df)
+```
+
+## Summary of the data
+```{r}
+summary(df)
+```
+
+## Plotting the data of Hours v/s Scores
+```{r}
+
+scatter.smooth(Hours,Scores,xlab='Hours',ylab='Scores',main='Hours vs. Scores')
+
+```
+
+#### Interpretation: Scores are linearly increasing with hours of study too.
+
+
+## Identifying Outliers
+```{r}
+boxplot(df,main='Boxplot')
+
+```
+
+#### Interpretation: No outliers and most of the data lies on upper part.(i.e..right skewed)
+
+
+## Preparing training and testing sets for modelling
+
+```{r}
+library(caret)
+set.seed(600)
+train_index=createDataPartition(df$Scores,p=0.7,list = F)
+trainset=df[train_index,]
+testset=df[-train_index,]
+print("----Trained----")
+```
+
+
+
+## Model Building...
+
+```{r}
+model=lm(Scores~Hours,data = trainset)
+summary(model)
+```
+
+## Coefficient of determination(R.Sq)
+```{r}
+summary(model)$r.squared*100
+
+```
+
+#### 95.2565 % of the variation in the exam scores can be explained by the number of hours studied .
+
+
+
+## Predicting Scores based on Model
+```{r}
+fit.model=fitted(model) ; fit.model
+
+```
+
+## Model Diagnostic Plots
+
+```{r}
+# Plot for Predicted v/s Actual Scores
+plot(x=predict(model), y= trainset$Scores,
+     xlab='Predicted Values',
+     ylab='Actual Values',
+     main='Predicted vs. Actual Values')
+abline(a=0, b=1)
+
+
+```
+
+
+```{r}
+plot(lm(Scores~Hours,data = trainset))
+```
+
+## Plot for cook’s distance
+```{r}
+cooks.distance(lm(Scores~Hours,data = trainset))
+
+```
+
+```{r}
+plot(cooks.distance(lm(Scores~Hours,data = trainset)))
+```
+
+
+## creating function for predicting score
+```{r}
+Score=function(hrs){
+  score=model[[1]][1]+(model[[1]][2])*hrs
+  if (hrs >= 2){
+      cat("The score is",score,"for studying",hrs,"hours.","\n")
+    }
+  else{
+    cat("The score is",score,"for studying",hrs,"hour.","\n")
+    }
+}
+```
+
+## Testing function()
+```{r}
+Score(1)
+```
+
+```{r}
+Score(9.25)
+```
+
+
+
+## Evaluating Model Accuracy
+```{r}
+#Root Mean Square Error
+#predicted values,testdata
+
+rmse=function(prevar,testdt) sqrt(mean(((testdt - prevar)^2)))
+
+a=rmse(fit.model,testset$Scores)
+cat("The performance of the model value is about ",a)
+
+```
+
+
+# -------Thank You-------
+
+
+
+
+
+
