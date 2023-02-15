@@ -1,0 +1,100 @@
+---
+title: "TSF-GRIP(Feb`23) Supervised-ML using R"
+author: "Bhanuprakash"
+date: "08/02/2023"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+#loading iris data
+df=iris
+head(df)
+tail(df)
+```
+
+## Summary
+```{r}
+summary(df)
+```
+
+
+```{r}
+#loading required libraries
+library(caret)
+library(rpart)
+library(rpart.plot)
+
+```
+
+
+## Training the dataset
+```{r}
+#Create training and testing datasets
+set.seed(500)
+
+training_index=createDataPartition(df$Species,p=0.7,list=F)
+trainset=df[training_index,]
+testset=df[-training_index,]
+
+print("------ Train Completed ------")
+```
+
+## Decision Tree Model computing..
+
+```{r}
+#defining decision treee model
+deci.tree=rpart(Species~.,data=trainset,parms = list(split="gini"))
+deci.tree
+```
+
+## Plotting Model
+
+```{r}
+#plotting decision tree model
+rpart.plot(deci.tree,extra = 109)
+
+```
+
+## Making Predictions
+
+```{r}
+# predicton with tree model on train data set.
+
+predict.train <- predict(deci.tree,newdata=trainset,type="class")
+addmargins(table(predict.train,trainset$Species))
+
+```
+
+```{r}
+# predictons with tree model on test data set.
+
+predict.test <- predict(deci.tree,newdata=testset,type="class")
+addmargins(table(predict.test,testset$Species))
+
+```
+
+## Accuracy of the Model...
+```{r}
+
+#confusion matrix for train set
+confusionMatrix(predict.train,trainset$Species)
+
+
+```
+#### Interpretation: Accuracy on the trainset data equals 0.9619,which is 
+96.19% .
+
+```{r}
+#confusion matrix for test set
+confusionMatrix(predict.test,testset$Species)
+
+```
+#### Interpretation: Accuracy on the testset data equals 0.9333,which is 
+93.33% .
+
+#### Finally ,The decision tree model performs well.Even though the accuracy of the testset is lower than the train set accuracy .
+
+
+# -------Thank You-------
