@@ -1,0 +1,119 @@
+---
+title: "TSF-GRIP(Feb`23) Unsupervised ML using R"
+author: "Bhanuprakash"
+date: "13/02/2023"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+## Loading required libraries
+```{r}
+library(factoextra)
+
+```
+
+
+## Lets prepare the dataset
+```{r}
+#loading iris data
+df1=iris
+head(df1)
+tail(df1)
+```
+
+## Dimension of the data
+```{r}
+dim(df1)
+```
+
+
+## Summary
+```{r}
+summary(df1)
+```
+
+
+## Scaling variables for cluster analysis
+```{r}
+scale.df1=scale(df1[1:4])
+head(scale.df1)
+
+```
+
+
+## Finding Optimal number of clusters for kmeans using plots.
+```{r}
+# Using method of total within sum of squares
+#an Elbow plot
+fviz_nbclust(scale.df1, kmeans, method = "wss")
+
+```
+###In this method,the cluster point at 3 had some bent position declining continously. therefore optimal no.of clusters is k=3 a/c to this plot.Lets see another method..
+
+
+```{r}
+# Using method of silhouette
+fviz_nbclust(scale.df1, kmeans, method = "silhouette")
+
+```
+###In this method also cluster point 3 had some bent position. therefore optimal no.of clusters is k=3 .Lets see another method..
+
+```{r}
+# Using method of gap_stat
+fviz_nbclust(scale.df1, kmeans, method = "gap_stat")
+
+```
+
+###we can see that gap statistic is highest at k = 3 clusters, which matches the wss method.i.e..Elbow method. Lets see what will happen for 50 obs`..
+
+
+```{r}
+# Using method of gap_stat for 50 obs`
+fviz_nbclust(scale.df1, kmeans, method = "gap_stat", nboot = 50)
+
+```
+
+###It is same as above...
+
+### From all these plots we can interprest that,the optimal number of clusters occurs at the k = 3.Hence ,our data has 3 cluster formations.
+
+
+## Computing K-means clustring for k=3 clusters
+```{r}
+set.seed(246)
+
+k.means = kmeans(scale.df1, centers = 3, nstart = 30)
+k.means
+```
+### It can be identifed that 53,50,47 percent of species are assigned to first,second,third clusters respectively.
+
+
+## Lets find the means or centroids of each cluster
+```{r}
+aggregate(scale.df1, by=list(cluster=k.means$cluster), mean)
+```
+### These are all the centroids of all species dimensions for each cluster.  
+
+
+## k-means model visualization 
+```{r}
+
+fviz_cluster(k.means, data = scale.df1)
+
+```
+
+## Finally, With respect to the problem statement ,it is concluded that there are 3 clusters ( k=3 ) for this iris dataset and visualized it graphically.
+
+
+
+
+# ------ THANK YOU ------
+
+
+
+
+
+
+
